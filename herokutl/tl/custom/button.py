@@ -63,7 +63,7 @@ class Button:
         ))
 
     @staticmethod
-    def inline(text, data=None):
+    def inline(text, data=None, style=None):
         """
         Creates a new inline button with some payload data in it.
 
@@ -79,6 +79,10 @@ class Button:
         <telethon.events.callbackquery.CallbackQuery>` will trigger with the
         same data that the button contained, so that you can determine which
         button was pressed.
+
+        Args:
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
         """
         if not data:
             data = text.encode('utf-8')
@@ -88,10 +92,13 @@ class Button:
         if len(data) > 64:
             raise ValueError('Too many bytes for the data')
 
-        return types.KeyboardButtonCallback(text, data)
+        button = types.KeyboardButtonCallback(text, data)
+        if style:
+            button.style = style
+        return button
 
     @staticmethod
-    def switch_inline(text, query='', same_peer=False):
+    def switch_inline(text, query='', same_peer=False, style=None):
         """
         Creates a new inline button to switch to inline query.
 
@@ -105,11 +112,18 @@ class Button:
         When the user clicks this button, after a chat is selected, their
         input field will be filled with the username of your bot followed
         by the query text, ready to make inline queries.
+
+        Args:
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
         """
-        return types.KeyboardButtonSwitchInline(text, query, same_peer)
+        button = types.KeyboardButtonSwitchInline(text, query, same_peer)
+        if style:
+            button.style = style
+        return button
 
     @staticmethod
-    def url(text, url=None):
+    def url(text, url=None, style=None):
         """
         Creates a new inline button to open the desired URL on click.
 
@@ -121,11 +135,18 @@ class Button:
         to the user asking whether they want to open the displayed URL unless
         the domain is trusted, and once confirmed the URL will open in their
         device.
+
+        Args:
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
         """
-        return types.KeyboardButtonUrl(text, url or text)
+        button = types.KeyboardButtonUrl(text, url or text)
+        if style:
+            button.style = style
+        return button
 
     @staticmethod
-    def auth(text, url=None, *, bot=None, write_access=False, fwd_text=None):
+    def auth(text, url=None, *, bot=None, write_access=False, fwd_text=None, style=None):
         """
         Creates a new inline button to authorize the user at the given URL.
 
@@ -159,20 +180,26 @@ class Button:
                 The new text to show in the button if the message is
                 forwarded. By default, the button text will be the same.
 
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
+
         When the user clicks this button, a confirmation box will be shown
         to the user asking whether they want to login to the specified domain.
         """
-        return types.InputKeyboardButtonUrlAuth(
+        button = types.InputKeyboardButtonUrlAuth(
             text=text,
             url=url or text,
             bot=utils.get_input_user(bot or types.InputUserSelf()),
             request_write_access=write_access,
             fwd_text=fwd_text
         )
+        if style:
+            button.style = style
+        return button
 
     @classmethod
     def text(cls, text, *, resize=None, single_use=None, selective=None,
-             persistent=None, placeholder=None):
+             persistent=None, placeholder=None, style=None):
         """
         Creates a new keyboard button with the given text.
 
@@ -203,14 +230,20 @@ class Button:
                 The placeholder to be shown in the input field when the keyboard is active;
                 1-64 characters
 
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
+
         When the user clicks this button, a text message with the same text
         as the button will be sent, and can be handled with `events.NewMessage
         <telethon.events.newmessage.NewMessage>`. You cannot distinguish
         between a button press and the user typing and sending exactly the
         same text on their own.
         """
+        button = types.KeyboardButton(text)
+        if style:
+            button.style = style
         return cls(
-            types.KeyboardButton(text),
+            button,
             resize=resize,
             single_use=single_use,
             selective=selective,
@@ -220,19 +253,26 @@ class Button:
 
     @classmethod
     def request_location(cls, text, *, resize=None, single_use=None, selective=None,
-                         persistent=None, placeholder=None):
+                         persistent=None, placeholder=None, style=None):
         """
         Creates a new keyboard button to request the user's location on click.
 
         ``resize``, ``single_use``, ``selective``, ``persistent`` and ``placeholder``
          are documented in `text`.
 
+        Args:
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
+
         When the user clicks this button, a confirmation box will be shown
         to the user asking whether they want to share their location with the
         bot, and if confirmed a message with geo media will be sent.
         """
+        button = types.KeyboardButtonRequestGeoLocation(text)
+        if style:
+            button.style = style
         return cls(
-            types.KeyboardButtonRequestGeoLocation(text),
+            button,
             resize=resize,
             single_use=single_use,
             selective=selective,
@@ -242,19 +282,26 @@ class Button:
 
     @classmethod
     def request_phone(cls, text, *, resize=None, single_use=None,
-                      selective=None, persistent=None, placeholder=None):
+                      selective=None, persistent=None, placeholder=None, style=None):
         """
         Creates a new keyboard button to request the user's phone on click.
 
         ``resize``, ``single_use``, ``selective``, ``persistent`` and ``placeholder``
          are documented in `text`.
 
+        Args:
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
+
         When the user clicks this button, a confirmation box will be shown
         to the user asking whether they want to share their phone with the
         bot, and if confirmed a message with contact media will be sent.
         """
+        button = types.KeyboardButtonRequestPhone(text)
+        if style:
+            button.style = style
         return cls(
-            types.KeyboardButtonRequestPhone(text),
+            button,
             resize=resize,
             single_use=single_use,
             selective=selective,
@@ -264,7 +311,7 @@ class Button:
 
     @classmethod
     def request_poll(cls, text, *, force_quiz=False, resize=None, single_use=None,
-                     selective=None, persistent=None, placeholder=None):
+                     selective=None, persistent=None, placeholder=None, style=None):
         """
         Creates a new keyboard button to request the user to create a poll.
 
@@ -279,11 +326,18 @@ class Button:
         ``resize``, ``single_use``, ``selective``, ``persistent`` and ``placeholder``
          are documented in `text`.
 
+        Args:
+            style (:obj:`~telethon.tl.custom.KeyboardButtonStyle`, optional):
+                Style configuration for the button (background color, icon).
+
         When the user clicks this button, a screen letting the user create a
         poll will be shown, and if they do create one, the poll will be sent.
         """
+        button = types.KeyboardButtonRequestPoll(text, quiz=force_quiz)
+        if style:
+            button.style = style
         return cls(
-            types.KeyboardButtonRequestPoll(text, quiz=force_quiz),
+            button,
             resize=resize,
             single_use=single_use,
             selective=selective,

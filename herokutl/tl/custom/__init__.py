@@ -13,3 +13,5 @@ from .conversation import Conversation
 from .qrlogin import QRLogin
 from .participantpermissions import ParticipantPermissions
 from .stargift import StarGift # skip merge
+from .keyboardbuttonstyle import KeyboardButtonStyle
+from .messageservicetype import MessageServiceType

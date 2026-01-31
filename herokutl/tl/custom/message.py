@@ -701,6 +701,23 @@ class Message(ChatGetter, SenderGetter, TLObject):
         return self._action_entities
 
     @property
+    def service_type(self):
+        """
+        Returns the service message type if this is a service message.
+        
+        This provides an easy way to identify the type of service message
+        without having to manually check the action type.
+        
+        Returns:
+            MessageServiceType or None if not a service message
+        """
+        if not self.action:
+            return None
+            
+        from .messageservicetype import MessageServiceType
+        return MessageServiceType.from_action(self.action)
+
+    @property
     def via_bot(self):
         """
         The bot :tl:`User` if the message was sent via said bot.

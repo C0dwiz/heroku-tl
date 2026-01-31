@@ -65,6 +65,15 @@ class MessageButton:
         if isinstance(self.button, types.KeyboardButtonUrl):
             return self.button.url
 
+    @property
+    def style(self):
+        """The button style if available."""
+        from .keyboardbuttonstyle import KeyboardButtonStyle
+        style = getattr(self.button, 'style', None)
+        if style:
+            return KeyboardButtonStyle._parse(style)
+        return None
+
     async def click(self, share_phone=None, share_geo=None, *, password=None, open_url=None):
         """
         Emulates the behaviour of clicking this button.
